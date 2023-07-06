@@ -1,3 +1,43 @@
+var dateDisplay = $('#currentDay');
+
+var thisHour = dayjs().format('hA');
+
+function displayDate() {
+  var thisDate = dayjs().format('dddd, MMMM D');
+  dateDisplay.text(thisDate);
+}
+
+
+displayDate();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
