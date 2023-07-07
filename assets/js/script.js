@@ -4,7 +4,6 @@ var scheduleDisplay = $('#root');
 var workHours = '9AM_10AM_11AM_12PM_1PM_2PM_3PM_4PM_5PM'.split('_');
 
 var thisHour = dayjs().format('hA');
-thisHour = '1PM'
 
 function displayDate() {
   var thisDate = dayjs().format('dddd, MMMM D');
@@ -13,32 +12,56 @@ function displayDate() {
 
 function printSchedule() {
   scheduleDisplay.empty();
-  var pastSet = false
+  var futureSet = false;
   for (var i = 0; i < workHours.length; i++) {
-    var rowEl = $('<div class="row time-block past">')
+    var rowEl = $('<div class="row time-block past" data-index="' + i + '">');
     var rowName = $('<div class="col-2 col-md-1 hour text-center py-3">');
     rowName.text(workHours[i]);
     var rowText = $('<textarea class="col-8 col-md-10 description" rows="3">');
     var rowButton = $('<button class="btn saveBtn col-2 col-md-1" aria-label="save">');
     var buttonIdiom = $('<i class="fas fa-save" aria-hidden="true">');
-    console.log(thisHour)
-    if (pastSet) {
+    if (futureSet) {
       rowEl.removeClass('past');
       rowEl.addClass('future');
     } else if (workHours[i] === thisHour) {
       rowEl.removeClass('past');
       rowEl.addClass('present');
-      pastSet = true
+      pastSet = true;
     }
     rowButton.append(buttonIdiom);
     rowEl.append(rowName, rowText, rowButton);
     scheduleDisplay.append(rowEl);
   }
+  readEntriesFromStorage();
+}
+
+function readEntriesFromStorage() {
+  var schedule = localStorage.getItem('schedule');
+  if (schedule) {
+    schedule = JSON.parse(schedule);
+  } else {
+    schedule = [];
+  }
+  return schedule;
+}
+
+function saveEntryToStorage() {
+  var rowIndex = parseInt($(this).parent().attr('data-index'));
+  var entryText = $(this).siblings('.description').val();
+  console.log(rowIndex);
+  console.log(entryText);
+  var scheduleEntry = {
+    row: rowIndex,
+    text: entryText
+  }
+
+  var schedule = readEntriesFromStorage();
+  schedule.push(scheduleEntry)
+  localStorage.setItem('schedule', JSON.stringify(schedule));
 }
 
 
-
-
+scheduleDisplay.on('click', '.saveBtn', saveEntryToStorage);
 
 displayDate();
 printSchedule();
