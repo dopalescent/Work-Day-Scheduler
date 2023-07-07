@@ -2,24 +2,28 @@ var dateDisplay = $('#currentDay');
 var scheduleDisplay = $('#root');
 
 var workHours = '9AM_10AM_11AM_12PM_1PM_2PM_3PM_4PM_5PM'.split('_');
-
 var thisHour = dayjs().format('hA');
 
+// displays date
 function displayDate() {
   var thisDate = dayjs().format('dddd, MMMM D');
   dateDisplay.text(thisDate);
 }
 
+// creates schedule
 function printSchedule() {
   scheduleDisplay.empty();
+  var schedule = readEntriesFromStorage();
   var futureSet = false;
+  // creates each timeblock row
   for (var i = 0; i < workHours.length; i++) {
-    var rowEl = $('<div class="row time-block past" data-index="' + i + '">');
+    var rowEl = $('<div class="row time-block past">');
     var rowName = $('<div class="col-2 col-md-1 hour text-center py-3">');
     rowName.text(workHours[i]);
     var rowText = $('<textarea class="col-8 col-md-10 description" rows="3">');
-    var rowButton = $('<button class="btn saveBtn col-2 col-md-1" aria-label="save">');
+    var rowButton = $('<button class="btn saveBtn col-2 col-md-1" aria-label="save" data-index="' + i + '">');
     var buttonIdiom = $('<i class="fas fa-save" aria-hidden="true">');
+    // sets color-change classes
     if (futureSet) {
       rowEl.removeClass('past');
       rowEl.addClass('future');
@@ -28,13 +32,21 @@ function printSchedule() {
       rowEl.addClass('present');
       pastSet = true;
     }
+    // appending created elements to appropriate parents
     rowButton.append(buttonIdiom);
     rowEl.append(rowName, rowText, rowButton);
     scheduleDisplay.append(rowEl);
+    // implementing local storage data
+    for (var j = 0; j < schedule.length; j++) {
+      var scheduleEntry = schedule[j];
+      if (scheduleEntry.row === i) {
+        rowText.val(scheduleEntry.text)
+      }
+    }
   }
-  readEntriesFromStorage();
 }
 
+// checks local storage for saved entries
 function readEntriesFromStorage() {
   var schedule = localStorage.getItem('schedule');
   if (schedule) {
@@ -45,60 +57,24 @@ function readEntriesFromStorage() {
   return schedule;
 }
 
+// saves entries to local storage
 function saveEntryToStorage() {
-  var rowIndex = parseInt($(this).parent().attr('data-index'));
+  // creates variable for new entry
+  var rowIndex = parseInt($(this).attr('data-index'));
   var entryText = $(this).siblings('.description').val();
-  console.log(rowIndex);
-  console.log(entryText);
   var scheduleEntry = {
     row: rowIndex,
     text: entryText
   }
-
+  // adds new entry to other entries, saves all to local storage
   var schedule = readEntriesFromStorage();
   schedule.push(scheduleEntry)
   localStorage.setItem('schedule', JSON.stringify(schedule));
 }
 
-
+// listens for save button clicks, triggers save function
 scheduleDisplay.on('click', '.saveBtn', saveEntryToStorage);
 
+// applies date and creates schedule table on page load
 displayDate();
 printSchedule();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
-$(function () {
-  // TODO: Add a listener for click events on the save button. This code should
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
-  //
-  // TODO: Add code to apply the past, present, or future class to each time
-  // block by comparing the id to the current hour. HINTS: How can the id
-  // attribute of each time-block be used to conditionally add or remove the
-  // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
-  //
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  //
-  // TODO: Add code to display the current date in the header of the page.
-});
