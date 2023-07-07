@@ -4,6 +4,7 @@ var scheduleDisplay = $('#root');
 var workHours = '9AM_10AM_11AM_12PM_1PM_2PM_3PM_4PM_5PM'.split('_');
 
 var thisHour = dayjs().format('hA');
+thisHour = '1PM'
 
 function displayDate() {
   var thisDate = dayjs().format('dddd, MMMM D');
@@ -12,14 +13,23 @@ function displayDate() {
 
 function printSchedule() {
   scheduleDisplay.empty();
+  var pastSet = false
   for (var i = 0; i < workHours.length; i++) {
-    var rowEl = $('<div id="hour-9" class="row time-block">')
+    var rowEl = $('<div class="row time-block past">')
     var rowName = $('<div class="col-2 col-md-1 hour text-center py-3">');
     rowName.text(workHours[i]);
     var rowText = $('<textarea class="col-8 col-md-10 description" rows="3">');
     var rowButton = $('<button class="btn saveBtn col-2 col-md-1" aria-label="save">');
     var buttonIdiom = $('<i class="fas fa-save" aria-hidden="true">');
-    // if
+    console.log(thisHour)
+    if (pastSet) {
+      rowEl.removeClass('past');
+      rowEl.addClass('future');
+    } else if (workHours[i] === thisHour) {
+      rowEl.removeClass('past');
+      rowEl.addClass('present');
+      pastSet = true
+    }
     rowButton.append(buttonIdiom);
     rowEl.append(rowName, rowText, rowButton);
     scheduleDisplay.append(rowEl);
