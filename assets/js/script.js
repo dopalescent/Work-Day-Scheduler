@@ -1,4 +1,7 @@
 var dateDisplay = $('#currentDay');
+var scheduleDisplay = $('#root');
+
+var workHours = '9AM_10AM_11AM_12PM_1PM_2PM_3PM_4PM_5PM'.split('_');
 
 var thisHour = dayjs().format('hA');
 
@@ -7,23 +10,28 @@ function displayDate() {
   dateDisplay.text(thisDate);
 }
 
+function printSchedule() {
+  scheduleDisplay.empty();
+  for (var i = 0; i < workHours.length; i++) {
+    var rowEl = $('<div id="hour-9" class="row time-block">')
+    var rowName = $('<div class="col-2 col-md-1 hour text-center py-3">');
+    rowName.text(workHours[i]);
+    var rowText = $('<textarea class="col-8 col-md-10 description" rows="3">');
+    var rowButton = $('<button class="btn saveBtn col-2 col-md-1" aria-label="save">');
+    var buttonIdiom = $('<i class="fas fa-save" aria-hidden="true">');
+    // if
+    rowButton.append(buttonIdiom);
+    rowEl.append(rowName, rowText, rowButton);
+    scheduleDisplay.append(rowEl);
+  }
+}
+
+
+
+
 
 displayDate();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+printSchedule();
 
 
 
