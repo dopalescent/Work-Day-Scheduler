@@ -15,6 +15,7 @@ function printSchedule() {
   scheduleDisplay.empty();
   var schedule = readEntriesFromStorage();
   var futureSet = false;
+
   // creates each timeblock row
   for (var i = 0; i < workHours.length; i++) {
     var rowEl = $('<div class="row time-block past">');
@@ -23,6 +24,7 @@ function printSchedule() {
     var rowText = $('<textarea class="col-8 col-md-10 description" rows="3">');
     var rowButton = $('<button class="btn saveBtn col-2 col-md-1" aria-label="save" data-index="' + i + '">');
     var buttonIdiom = $('<i class="fas fa-save" aria-hidden="true">');
+
     // sets color-change classes
     if (futureSet) {
       rowEl.removeClass('past');
@@ -30,12 +32,14 @@ function printSchedule() {
     } else if (workHours[i] === thisHour) {
       rowEl.removeClass('past');
       rowEl.addClass('present');
-      pastSet = true;
+      futureSet = true;
     }
+
     // appending created elements to appropriate parents
     rowButton.append(buttonIdiom);
     rowEl.append(rowName, rowText, rowButton);
     scheduleDisplay.append(rowEl);
+
     // implementing local storage data
     for (var j = 0; j < schedule.length; j++) {
       var scheduleEntry = schedule[j];
@@ -66,6 +70,7 @@ function saveEntryToStorage() {
     row: rowIndex,
     text: entryText
   }
+  
   // adds new entry to other entries, saves all to local storage
   var schedule = readEntriesFromStorage();
   schedule.push(scheduleEntry)
